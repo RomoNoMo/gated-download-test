@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gated CAD Download (Demo)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      #downloads {
+        display: none;
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+      }
+
+      button {
+        padding: 10px 16px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Gated CAD Download (Demo Mode)</h1>
+
+    <p id="status">
+      Step 1: Verify your wallet to unlock downloads.
+    </p>
+
+    <!-- IMPORTANT: type="button" prevents navigation -->
+    <button
+      id="verifyBtn"
+      type="button"
+      onclick="verifyOwnership()"
+    >
+      Verify with XUMM
+    </button>
+
+    <div id="downloads">
+      <h2>Downloads (Demo)</h2>
+      <ul>
+        <li>Download STL (placeholder)</li>
+        <li>Download 3DM (placeholder)</li>
+      </ul>
+    </div>
+
+    <script>
+      async function verifyOwnership() {
+        document.getElementById("status").innerText =
+          "Verifying wallet (serverless demo)…";
+        document.getElementById("verifyBtn").disabled = true;
+
+        try {
+          const response = await fetch(
+            "/.netlify/functions/check-ownership"
+          );
+
+          const data = await response.json();
+
+          if (data.verified === true) {
+            document.getElementById("verifyBtn").style.display = "none";
+            document.getElementById("downloads").style.display = "block";
+            document.getElementById("status").innerText =
+              "✅ Ownership verified (demo). Downloads unlocked.";
+          } else {
+            document.getElementById("status").innerText =
+              "❌ Ownership not verified.";
+            document.getElementById("verifyBtn").disabled = false;
+          }
+        } catch (error) {
+          document.getElementById("status").innerText =
+            "❌ Server error. Please try again.";
+          document.getElementById("verifyBtn").disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>
+``
