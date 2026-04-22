@@ -1,11 +1,11 @@
 const XRPL_ENDPOINT = "https://s1.ripple.com:51234";
 
-// 🔴 REPLACE WITH YOUR REAL ISSUER ADDRESS
+// ✅ PUT YOUR REAL ISSUER ADDRESS HERE
 const ISSUER_ADDRESS = "rDGYJop7bqtzXwsammJnENho7u2aBv9Ni9";
 
 exports.handler = async function (event) {
   try {
-    // 🔁 STEP A: XUMM callback (POST)
+    // ✅ MODE 1: XUMM CALLBACK (POST)
     if (event.httpMethod === "POST") {
       const payload = JSON.parse(event.body || "{}");
       const wallet = payload?.response?.account;
@@ -14,8 +14,7 @@ exports.handler = async function (event) {
         return json({ verified: false });
       }
 
-      const xrplRes = await fetch(Xm);
-      const xrpl = await fetch(XRPL_ENDPOINT, {
+      const xrplRes = await fetch(XRPL_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -24,15 +23,17 @@ exports.handler = async function (event) {
         }),
       });
 
-      const data = await xrpl.json();
+      const data = await xrplRes.json();
       const nfts = data?.result?.account_nfts || [];
 
-      const verified = nfts.some(nft => nft.Issuer === ISSUER_ADDRESS);
+      const verified = nfts.some(
+        (nft) => nft.Issuer === ISSUER_ADDRESS
+      );
 
       return json({ verified });
     }
 
-    // 🔁 STEP B: Initial call → Create XUMM SignIn
+    // ✅ MODE 2: INITIAL REQUEST → CREATE XUMM SIGNIN
     const res = await fetch("https://xumm.app/api/v1/platform/payload", {
       method: "POST",
       headers: {
@@ -68,3 +69,4 @@ function json(obj) {
     body: JSON.stringify(obj),
   };
 }
+``
